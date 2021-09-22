@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ book.title }}{% endblock title %}
+
+{% block content %}
+    <header>
+        <a href="{% url 'all-books' %}">All Books</a>
+    </header>
+    <h1>{{ book.title }}</h1>
+    <h2>{{ book.author }}</h2>
+    <p>The book has a rating of {{ book.rating }}</p>
+    {% if is_bestseller %}
+        and is a bestseller.
+    {% else %}
+        but isn't a bestseller.
+    {% endif %}
+{% endblock content %}
