@@ -1,8 +1,17 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
-from django.db.models.fields import CharField
-
 from django.urls import reverse
+
+
+class Country(models.Model):
+    name = models.CharField(max_length=80)
+    code = models.CharField(max_length=2)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name_plural = "Countries"
 
 
 class Address(models.Model):
@@ -38,6 +47,7 @@ class Book(models.Model):
         Author, on_delete=models.CASCADE, null=True, related_name="books")
     is_bestselling = models.BooleanField(default=False)
     slug = models.SlugField(default="", blank=True, null=False, db_index=True)
+    published_countries = models.ManyToManyField(Country)
 
     def get_absolute_url(self):
         return reverse("book-detail", args=[self.slug])
