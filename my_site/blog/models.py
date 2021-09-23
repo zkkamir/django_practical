@@ -39,7 +39,7 @@ class Post(models.Model):
 
     def get_absolute_url(self):
         """Return the absolute url of a blog post."""
-        return reverse("post-detail", args=[self.slug])
+        return reverse("post-detail-page", args=[self.slug])
 
     def __str__(self):
         """Return the string representation of the model."""

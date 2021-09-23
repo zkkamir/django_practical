@@ -1,99 +1,24 @@
-from datetime import date
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 
-
-all_posts = [
-    {
-        "slug": "hike-in-the-mountains",
-        "image": "max.png",
-        "author": "Max",
-        "date": date(2021, 7, 21),
-        "title": "Mountain Hiking",
-        "excerpt": "Lorem ipsum dolor sit, amet  adipisicing elit. Veniam, optio aut temporibus nemo nihil, nisi deleniti velit quis ex ratione tempore harum numquam, quia ut modi asperiores? Ex, ipsam temporibus?",
-        "content": """
-            Lorem ipsum dolor sit, amet  adipisicing elit. Veniam,
-            optio aut temporibus nemo nihil, nisi deleniti velit
-            quis ex ratione tempore harum numquam, quia ut modi
-            asperiores? Ex, ipsam temporibus?
-
-            Lorem ipsum dolor sit, amet  adipisicing elit. Veniam,
-            optio aut temporibus nemo nihil, nisi deleniti velit
-            quis ex ratione tempore harum numquam, quia ut modi
-            asperiores? Ex, ipsam temporibus?
-
-            Lorem ipsum dolor sit, amet  adipisicing elit. Veniam,
-            optio aut temporibus nemo nihil, nisi deleniti velit
-            quis ex ratione tempore harum numquam, quia ut modi
-            asperiores? Ex, ipsam temporibus?
-            """
-    },
-    {
-        "slug": "jungle",
-        "image": "max.png",
-        "author": "Max",
-        "date": date(2021, 2, 1),
-        "title": "jungle",
-        "excerpt": "jungle Lorem ipsum dolor sit, amet  adipisicing elit. Veniam, optio aut temporibus nemo nihil, nisi deleniti velit quis ex ratione tempore harum numquam, quia ut modi asperiores? Ex, ipsam temporibus?",
-        "content": """
-            Lorem ipsum dolor sit, amet  adipisicing elit. Veniam,
-            optio aut temporibus nemo nihil, nisi deleniti velit
-            quis ex ratione tempore harum numquam, quia ut modi
-            asperiores? Ex, ipsam temporibus?
-
-            Lorem ipsum dolor sit, amet  adipisicing elit. Veniam,
-            optio aut temporibus nemo nihil, nisi deleniti velit
-            quis ex ratione tempore harum numquam, quia ut modi
-            asperiores? Ex, ipsam temporibus?
-
-            Lorem ipsum dolor sit, amet  adipisicing elit. Veniam,
-            optio aut temporibus nemo nihil, nisi deleniti velit
-            quis ex ratione tempore harum numquam, quia ut modi
-            asperiores? Ex, ipsam temporibus?
-            """
-    },
-    {
-        "slug": "sea",
-        "image": "max.png",
-        "author": "Max",
-        "date": date(2021, 5, 14),
-        "title": "sea",
-        "excerpt": "Lorem sea ipsum dolor sit, amet  adipisicing elit. Veniam, optio aut temporibus nemo nihil, nisi deleniti velit quis ex ratione tempore harum numquam, quia ut modi asperiores? Ex, ipsam temporibus?",
-        "content": """
-            Lorem ipsum dolor sit, amet  adipisicing elit. Veniam,
-            optio aut temporibus nemo nihil, nisi deleniti velit
-            quis ex ratione tempore harum numquam, quia ut modi
-            asperiores? Ex, ipsam temporibus?
-
-            Lorem ipsum dolor sit, amet  adipisicing elit. Veniam,
-            optio aut temporibus nemo nihil, nisi deleniti velit
-            quis ex ratione tempore harum numquam, quia ut modi
-            asperiores? Ex, ipsam temporibus?
-
-            Lorem ipsum dolor sit, amet  adipisicing elit. Veniam,
-            optio aut temporibus nemo nihil, nisi deleniti velit
-            quis ex ratione tempore harum numquam, quia ut modi
-            asperiores? Ex, ipsam temporibus?
-            """
-    }
-]
+from .models import Post
 
 
 def starting_page(request):
-    sorted_posts = sorted(all_posts, key=lambda x: x["date"])
-    latest_posts = sorted_posts[-3:]
+    latest_posts = Post.objects.all().order_by("-date")[:3]
     return render(request, "blog/index.html", context={
         "posts": latest_posts
     })
 
 
 def posts(request):
+    all_posts = Post.objects.all().order_by("-date")
     return render(request, "blog/all-posts.html", context={
         "all_posts": all_posts
     })
 
 
 def post_detail(request, slug):
-    post = next(post for post in all_posts if post["slug"] == slug)
+    post = get_object_or_404(Post, slug=slug)
     return render(request, "blog/post-detail.html", context={
         "post": post
     })
