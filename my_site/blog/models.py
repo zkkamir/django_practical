@@ -1,3 +1,4 @@
+from django.core.validators import MinLengthValidator
 from django.db import models
 from django.urls import reverse
 
@@ -6,7 +7,7 @@ class Author(models.Model):
     """A class to represent post authors."""
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
-    email = models.EmailField(max_length=255)
+    email = models.EmailField()
 
     def get_full_name(self):
         """Return the full name of the author."""
@@ -19,7 +20,7 @@ class Author(models.Model):
 
 class Tag(models.Model):
     """A class to represent tags of blog posts."""
-    caption = models.CharField(max_length=255)
+    caption = models.CharField(max_length=20)
 
     def __str__(self):
         """Return the string representation of the model."""
@@ -30,11 +31,12 @@ class Post(models.Model):
     """A class to represent blog posts."""
     title = models.CharField(max_length=255)
     excerpt = models.CharField(max_length=255)
-    content = models.TextField()
-    slug = models.SlugField(db_index=True)
-    date = models.DateField()
+    content = models.TextField(validators=[MinLengthValidator(10)])
+    slug = models.SlugField(unique=True)  # db index is default to True
+    date = models.DateField(auto_now=True)
     image = models.CharField(max_length=255)
-    author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    author = models.ForeignKey(
+        Author, on_delete=models.SET_NULL, null=True, related_name="posts")
     tags = models.ManyToManyField(Tag)
 
     def get_absolute_url(self):
