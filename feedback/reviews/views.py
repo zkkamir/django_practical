@@ -1,5 +1,6 @@
-from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.http import request
+from django.http.response import HttpResponseRedirect
+from django.views import View
 from django.views.generic.base import TemplateView
 from django.views.generic import DeleteView, ListView
 from django.views.generic.edit import CreateView
@@ -33,3 +34,18 @@ class ReviewsListView(ListView):
 class ReviewDetailView(DeleteView):
     template_name = "reviews/review_detail.html"
     model = Review
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        loaded_review = self.object
+        request = self.request
+        favorite_id = request.session.get("favorite_review")
+        context["is_favorite"] = favorite_id == str(loaded_review.id)
+        return context
+
+
+class AddFavoriteView(View):
+    def post(self, request):
+        review_id = request.POST["review_id"]
+        request.session["favorite_review"] = review_id
+        return HttpResponseRedirect("/reviews/" + review_id)
